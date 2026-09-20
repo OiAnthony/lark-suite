@@ -2,7 +2,8 @@ name: Sync official Lark suite skill
 
 on:
   schedule:
-    - cron: "0 22 * * *"
+    - cron: "0 6 * * *"
+      timezone: "Asia/Shanghai"
   workflow_dispatch:
 
 permissions:
@@ -39,8 +40,8 @@ jobs:
         with:
           branch: automation/sync-lark-suite
           base: master
-          commit-message: "chore(skills): sync official lark suite"
-          title: "chore(skills): sync official lark suite"
+          commit-message: "chore(skills): sync lark suite"
+          title: "chore(skills): sync lark suite"
           body: |
             Regenerated with the latest `@larksuite/cli` using `lark-cli update --skills-layout suite` in an isolated HOME.
 
