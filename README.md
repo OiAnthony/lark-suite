@@ -1,0 +1,43 @@
+# Lark Suite
+
+这是官方 Lark CLI `suite` layout 的可版本化公共镜像。
+
+## 安装
+
+```bash
+npx skills add OiAnthony/lark-suite --skill lark-suite -g -y
+```
+
+安装后，`npx skills` 会在全局 skill lock 中记录本仓库来源和 `lark-suite` 目录 hash。领域文档收纳在同一个 skill 的 `references/` 下，不会被发现为独立 skill。
+
+## 更新
+
+```bash
+npx skills update lark-suite -g -y
+```
+
+更新由 `npx skills` 管理，不需要重新运行 `lark-cli update`。本仓库每天使用官方 CLI 生成 suite layout；变更会先通过 GitHub Actions 校验并创建 Pull Request。
+
+## 本地维护
+
+环境要求：Node.js 22.20 或更高版本、官方 `lark-cli` binary。
+
+```bash
+npm install --global @larksuite/cli@latest
+npm run sync
+npm test
+npm run check
+npx skills add . --list
+```
+
+`npm run sync` 会在临时 `HOME` 中运行 `lark-cli update --skills-layout suite --force --json`，然后只复制生成的 `lark-suite` skill 和 release 状态；不会修改当前用户的 CLI、认证配置或 global skills。
+
+## 范围
+
+- `skills/lark-suite/SKILL.md` 和 `references/*/GUIDE.md` 是官方 CLI 生成的发布产物。
+- `sync-state.json` 记录生成所用的 CLI release 和官方 domain 数量，不记录用户凭证或本机路径。
+- 本仓库不重新实现 Lark API，也不维护领域指南的独立 fork。
+
+## 许可
+
+生成的指南派生自 [`larksuite/cli`](https://github.com/larksuite/cli)，采用其适用的 MIT license。本仓库是独立的公共镜像。

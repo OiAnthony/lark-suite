@@ -1,0 +1,16 @@
+{
+  "name": "lark-suite",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Versioned public mirror of the official Lark CLI suite skill",
+  "type": "module",
+  "engines": {
+    "node": ">=22.20"
+  },
+  "scripts": {
+    "sync": "node scripts/sync-suite.mjs",
+    "check": "node scripts/check-suite.mjs",
+    "test": "node --test"
+  },
+  "license": "MIT"
+}

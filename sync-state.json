@@ -1,0 +1,10 @@
+{
+  "source": "larksuite/cli",
+  "cliVersion": "1.0.96",
+  "releaseUrl": "https://github.com/larksuite/cli/releases/tag/v1.0.96",
+  "skillsLayout": "suite",
+  "officialDomainCount": 28,
+  "localPathRepairs": [
+    "references/lark-skill-maker/GUIDE.md: ../lark-suite/references/lark-shared/GUIDE.md -> ../lark-shared/GUIDE.md"
+  ]
+}
