@@ -5,8 +5,10 @@
 ## 安装
 
 ```bash
-npx skills add OiAnthony/lark-suite --skill lark-suite -g -y
+npx skills add OiAnthony/lark-suite --skill lark-suite -g -y -a universal
 ```
+
+安装到用户全局 skill 目录 `~/.agents/skills/lark-suite`。`-g` 指定全局作用域，`-a universal` 直接指向跨 agent 共享的 canonical 目录，因此只写这一处即可被所有读取 `~/.agents/skills` 的 agent 发现；不建议省略该参数，否则 CLI 还会把同一份 skill 扩散到其余基于 `.agents/skills` 的 agent，并额外报告一条 PromptScript 不支持全局安装的失败（该 agent 无全局目录，详见 [vercel-labs/skills#1352](https://github.com/vercel-labs/skills/issues/1352)）。
 
 安装后，`npx skills` 会在全局 skill lock 中记录本仓库来源和 `lark-suite` 目录 hash。领域文档收纳在同一个 skill 的 `references/` 下，不会被发现为独立 skill。
 

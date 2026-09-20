@@ -5,8 +5,10 @@ Versioned public mirror of the official Lark CLI `suite` layout.
 ## Install
 
 ```bash
-npx skills add OiAnthony/lark-suite --skill lark-suite -g -y
+npx skills add OiAnthony/lark-suite --skill lark-suite -g -y -a universal
 ```
+
+This installs into the user-global skill directory `~/.agents/skills/lark-suite`. `-g` selects the global scope, and `-a universal` targets the canonical directory shared across agents, so writing that single location makes the skill visible to every agent that reads `~/.agents/skills`. Do not drop the flag: without it the CLI also fans the same skill out to the remaining `.agents/skills`-based agents and reports an extra PromptScript global-install failure (that agent has no global directory; see [vercel-labs/skills#1352](https://github.com/vercel-labs/skills/issues/1352)).
 
 `npx skills` records this repository as the global skill source and tracks the `lark-suite` directory hash in the skill lock. Domain guides live under one skill's `references/` directory and are not discovered as standalone skills.
 
