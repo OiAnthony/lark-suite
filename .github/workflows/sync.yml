@@ -7,8 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: sync-official-lark-suite
@@ -21,6 +20,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -28,16 +28,20 @@ jobs:
       - run: npm run sync
       - run: npm test
       - run: npm run check
-      - id: changes
-        run: |
-          if git diff --quiet -- skills sync-state.json; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
-      - if: steps.changes.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v7
+      - uses: actions/create-github-app-token@v2
+        id: app-token
         with:
+          app-id: ${{ vars.SYNC_APP_ID }}
+          private-key: ${{ secrets.SYNC_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+      - uses: peter-evans/create-pull-request@v7
+        id: pull-request
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          add-paths: |
+            skills/**
+            sync-state.json
           branch: automation/sync-lark-suite
           base: master
           commit-message: "chore(skills): sync lark suite"
@@ -46,3 +50,10 @@ jobs:
             Regenerated with the latest `@larksuite/cli` using `lark-cli update --skills-layout suite` in an isolated HOME.
 
             The generated skill is validated with `npm test` and `npm run check`.
+      - name: Enable auto-merge for the synchronization PR
+        if: steps.pull-request.outputs.pull-request-number != '' && steps.pull-request.outputs.pull-request-operation != 'closed'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_NUMBER: ${{ steps.pull-request.outputs.pull-request-number }}
+          HEAD_SHA: ${{ steps.pull-request.outputs.pull-request-head-sha }}
+        run: gh pr merge "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --auto --squash --match-head-commit "$HEAD_SHA"

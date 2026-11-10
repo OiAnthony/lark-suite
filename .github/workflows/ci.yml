@@ -20,3 +20,25 @@ jobs:
       - run: npm test
       - run: npm run check
       - run: npx --yes skills add . --list
+
+  sync-scope:
+    if: github.event_name == 'pull_request' && github.head_ref == 'automation/sync-lark-suite'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reject synchronization branches from forks
+        if: github.event.pull_request.head.repo.full_name != github.repository
+        run: exit 1
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check synchronization diff with the base branch validator
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          git fetch --no-tags origin "$HEAD_SHA"
+          node scripts/check-sync-scope.mjs "$BASE_SHA" "$HEAD_SHA"
